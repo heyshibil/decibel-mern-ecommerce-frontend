@@ -25,7 +25,7 @@ const Bestsellers = () => {
       <div id="product-grid" className="mt-6 lg:mt-12 grid grid-cols-1 lg:grid-cols-4 gap-6 w-[1fr, 1fr, 1fr, 1fr]">
         {
           bestsellers.map((product) => {
-            return (<Card key={product.id} id={product.id} productName={product.productName} type={product.type} price={product.price} img={product.image} />)
+            return (<Card key={product._id} id={product.id} productName={product.productName} type={product.type} price={product.price} img={product.image} />)
           })
         }
         

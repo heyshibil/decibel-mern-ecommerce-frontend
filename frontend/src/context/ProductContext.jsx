@@ -4,22 +4,20 @@ import api from "../services/api";
 const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
-  // const [bestsellers, setBestsellers] = useState([]);
+  const [bestsellers, setBestsellers] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const [productsResponse] = await Promise.all([
-          // api.get("/bestsellers"),
-          api.get("/products")
-        ]);
+        const { data: products } = await api.get("/products");
+        const bestProducts = products.filter(product => product.status === "Bestseller").slice(4);
 
-        // setBestsellers(bestsellersResponse.data);
-        setProducts(productsResponse.data);
+        setProducts(products);
+        setBestsellers(bestProducts);
       } catch (err) {
-        console.error("Error while loading datas:",err);
+        console.error("Error while loading datas:", err);
       } finally {
         setLoading(false);
       }
@@ -29,7 +27,7 @@ export const ProductProvider = ({ children }) => {
   }, []);
 
   return (
-    <ProductContext.Provider value={{products, loading}} > 
+    <ProductContext.Provider value={{ bestsellers, products, loading }}>
       {children}
     </ProductContext.Provider>
   );
