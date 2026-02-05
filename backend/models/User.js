@@ -33,6 +33,9 @@ userSchema.pre("save", async function () {
   }
 });
 
-// WARNING: also need a middleware setup in Login!!!
+// login password combine function
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 export const User = mongoose.model("User", userSchema);

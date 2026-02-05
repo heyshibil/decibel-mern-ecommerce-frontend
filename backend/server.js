@@ -14,10 +14,10 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-// product routes
+// product router
 app.use("/api/products", productRoutes);
 
-// user routes
+// user router
 app.use("/api/users", userRoutes);
 
 app.listen(PORT, () =>

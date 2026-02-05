@@ -43,3 +43,46 @@ export const registerUser = async (req, res) => {
       .json({ message: "Server error. Please try again later" });
   }
 };
+
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Please provide email and password" });
+    }
+
+    const user = await User.findOne({ email });
+
+    // user && comparing password with matchPassword method (model)
+    if (user && (await user.matchPassword(password))) {
+      if (user.isBlocked) {
+        return res.status(403).json({
+          message: "Your access has been restricted. Please contact support",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Login successful",
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          wishlist: user.wishlist,
+          cart: user.cart,
+        },
+        token: generateToken(user._id),
+      });
+    } else {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error. Please try again later" });
+  }
+};

@@ -44,45 +44,33 @@ export const AuthProvider = ({ children }) => {
 
   // Register
   const register = async ({ name, email, password }) => {
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Invalid email address");
+      return;
+    }
+    // Check password strength
+    if (password.length < 6) {
+      toast.error("Password is too short");
+      return;
+    }
+
     try {
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        toast.error("Please enter a valid email address");
-        return null;
-      }
-
-      // Check password strength
-      if (password.length < 6) {
-        toast.error("Password must be at least 6 characters long");
-        return null;
-      }
-
-      const res = await api.get(`/users?email=${encodeURIComponent(email)}`);
-      // check user is existing
-      if (res.data.length > 0) {
-        toast.error("Email is already registered");
-        return null;
-      }
-
-      // create new user
-      const newUser = await api.post("/users", {
+      const res = await api.post("/users/register", {
         username: name,
-        email: email,
-        password: password,
-        isBlocked: false,
-        isOnline: false,
-        wishlist: [],
-        cart: [],
+        email,
+        password,
       });
 
       toast.success("Registration successful! Please login.");
       goLogin();
-      return newUser.data;
+
+      return res.data;
     } catch (err) {
-      toast.error("Something went wrong");
+      toast.error(err?.response?.data?.message || "Server is unreachable. Try again later")
       console.error("Registration failed:", err);
-      return null;
+      return;
     }
   };
 
