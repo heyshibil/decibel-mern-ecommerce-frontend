@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import api from "../services/api";
 import { useAppNavigation } from "../hooks/useAppNavigation";
 import toast from "react-hot-toast";
+import { loginSchema, registerSchema } from "../utils/validation";
 
 const AuthContext = createContext();
 
@@ -20,22 +21,19 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Register
-  const register = async ({ name, email, password }) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const register = async ({ username, email, password, confirmPassword }) => {
+    
+    const validation = registerSchema.safeParse({ username, email, password, confirmPassword });
 
-    if (!emailRegex.test(email)) {
-      toast.error("Invalid email address");
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error("Password is too short");
+    if (!validation.success) {
+      const errorMessage = validation.error.issues[0].message;
+      toast.error(errorMessage);
       return;
     }
 
     try {
       const res = await api.post("/users/register", {
-        username: name,
+        username,
         email,
         password,
       });
@@ -58,6 +56,14 @@ export const AuthProvider = ({ children }) => {
 
   // Login
   const login = async ({ email, password }) => {
+    const validation = loginSchema.safeParse({ email, password });
+
+    if (!validation.success) {
+      const errorMessage = validation.error.issues[0].message;
+      toast.error(errorMessage);
+      return;
+    }
+
     try {
       const res = await api.post(`/users/login`, { email, password });
       const userData = res.data.user;
@@ -68,11 +74,11 @@ export const AuthProvider = ({ children }) => {
       goHome();
       return userData;
     } catch (error) {
+      console.error(error);
       toast.error(
         error?.response?.data?.message ||
           "Server is unreachable. Try again later",
       );
-      console.error(error);
     }
   };
 

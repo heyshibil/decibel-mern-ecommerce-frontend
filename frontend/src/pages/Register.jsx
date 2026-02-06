@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 const Register = () => {
   const { register } = useAuth();
 
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -15,18 +15,8 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name.trim()) {
-      toast.error("Name is required");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
     try {
-      const userData = await register({ name, email, password });
+      const userData = await register({ username, email, password, confirmPassword });
       if (userData) {
         toast.success(`Account created! Welcome, ${userData.username}`);
       }
@@ -57,7 +47,7 @@ const Register = () => {
                   type="text"
                   placeholder="Last Name"
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </div>

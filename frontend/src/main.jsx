@@ -24,8 +24,12 @@ createRoot(document.getElementById("root")).render(
                 toastOptions={{
                   duration: 3000,
                   style: {
+                    maxWidth: "500px",
+                    padding: "14px 18px",
+                    borderRadius: "8px",
                     background: "#333",
                     color: "#fff",
+                    fontSize: "15px",
                   },
                 }}
               />
@@ -34,7 +38,7 @@ createRoot(document.getElementById("root")).render(
         </WishlistCartProvider>
       </ProductProvider>
     </AuthProvider>
-  </BrowserRouter>
+  </BrowserRouter>,
   // </StrictMode>
 );
 
