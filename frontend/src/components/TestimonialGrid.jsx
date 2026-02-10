@@ -9,9 +9,9 @@ const TestimonialGrid = () => {
       feed: "Never experienced sound this pure. The clarity, the bass, everything feels balanced. Definitely worth every rupee!",
     },
     {
-      user: "Alex Jordan",
-      profession: "Podcast",
-      userImg: "src/assets/nam.jpg",
+      user: "Shafi Vilayil",
+      profession: "Philosopher",
+      userImg: "src/assets/shafi.jpeg",
       feed: "Exceptional clarity and comfort. The sound feels rich and balanced, and the noise cancellation makes a huge difference during travel. It’s easily one of the best audio experiences I’ve had premium build, premium sound.",
     },
     {
