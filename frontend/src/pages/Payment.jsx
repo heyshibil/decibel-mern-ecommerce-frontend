@@ -13,7 +13,7 @@ const Payment = () => {
   const { goCheckout, goOrders } = useAppNavigation();
   const { createNewOrder } = useOrders();
   const { user } = useAuth();
-  const storedData = JSON.parse(localStorage.getItem(`addressOf${user.id}`));
+  const storedData = JSON.parse(localStorage.getItem(`addressOf${user._id}`));
 
   // Handle processing timeout
   useEffect(() => {
@@ -42,7 +42,7 @@ const Payment = () => {
     // creating new order
     const orderData = {
       id: "ORD-" + Date.now().toString().slice(-5),
-      userId: user.id,
+      userId: user._id,
       items: cart,
       total: total,
       status: "Ordered",
@@ -206,7 +206,7 @@ const Payment = () => {
                 type="button"
                 onClick={() => {
                   handleClearCart();
-                  goOrders(user.id);
+                  goOrders(user._id);
                 }}
               >
                 View Orders
