@@ -9,6 +9,6 @@ router.get("/", getCart)
 router.post("/add", addToCart);
 router.patch("/update", updateCart);
 router.delete("/remove/:productId", removeFromCart);
-router.delete("/", clearCart)
+router.patch("/clear", clearCart)
 
 export default router;

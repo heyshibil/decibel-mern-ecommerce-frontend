@@ -25,6 +25,7 @@ export const removeFromCartApi = async (productId) => {
 };
 
 // clear cart
-export const clearCart = async (userId) => {
-  await api.patch(`/users/${userId}`, { cart: [] });
+export const clearCart = async () => {
+  const { data } = await api.patch("/cart/clear");
+  return data;
 };

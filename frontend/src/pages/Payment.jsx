@@ -8,18 +8,16 @@ import { useOrders } from "../context/OrdersContext";
 const Payment = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const { total, cart, handleClearCart, subTotal, gst } = useWishlistCart();
+  const { total, cart, subTotal, gst, handleClearCart } = useWishlistCart();
   const [upi, setUPI] = useState("");
   const { goCheckout, goOrders } = useAppNavigation();
   const { createNewOrder } = useOrders();
   const { user } = useAuth();
-  const [newOrder, setNewOrder] = useState(null);
-
 
   const storedData = JSON.parse(localStorage.getItem(`addressOf${user._id}`));
 
   // destructuring storedData
-    const {
+  const {
     firstName,
     lastName,
     email,
@@ -59,11 +57,16 @@ const Payment = () => {
       };
 
       const data = await createNewOrder(orderData);
+      await handleClearCart()
+      
       // Set success only after successful order creation
       setIsSuccess(true);
     } catch (error) {
       console.error("Payment error:", error);
-      toast.error(error?.response?.data?.message || "Payment processing failed. Please try again.");
+      toast.error(
+        error?.response?.data?.message ||
+          "Payment processing failed. Please try again.",
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -206,10 +209,7 @@ const Payment = () => {
               <button
                 className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all duration-300"
                 type="button"
-                onClick={() => {
-                  handleClearCart();
-                  goOrders(user._id);
-                }}
+                onClick={() => goOrders(user._id)}
               >
                 View Orders
               </button>
