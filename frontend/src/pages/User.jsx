@@ -28,7 +28,7 @@ const User = () => {
   // fetch orders details
   const totalOrders = orders.length;
   const totalSpend = orders.reduce(
-    (sum, order) => sum + Number(order.total),
+    (sum, order) => sum + Number(order.amount.total),
     0
   );
 
