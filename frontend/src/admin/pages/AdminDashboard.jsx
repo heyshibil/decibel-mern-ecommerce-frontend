@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FiUsers, FiShoppingBag, FiBox } from "react-icons/fi";
 import { FaRupeeSign } from "react-icons/fa";
 import { useAdminStats } from "../context/AdminStatsContext";
-import { useOrders } from "../../context/OrdersContext";
 import ChartSection from "../components/ChartSection";
 
 const AdminDashboard = () => {
@@ -10,7 +9,7 @@ const AdminDashboard = () => {
   const { users, orders, totalUsers, totalProducts, totalOrders, revenue } = stats;
 
   const colorStatus = {
-    Ordered : "text-gray-400",
+    Processing : "text-gray-400",
     Shipped : "text-amber-500",
     Delivered : "text-green-500",
   }
@@ -92,16 +91,15 @@ const AdminDashboard = () => {
           </thead>
 
           <tbody className="text-gray-700">
-            {orders.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5).map((order) => {
-              const user = users.find((user) => user.id == order.userId);
+            {orders.map((order) => {
 
               return (
-                <tr key={order.orderId} className="border-b">
-                  <td className="py-3">#{order.id}</td>
-                  <td className="py-3">{user.username ?? "Unknown"}</td>
-                  <td className="py-3">₹{order.total}</td>
-                  <td className={`py-3 ${colorStatus[order.status]} font-medium`}>
-                    {order.status}
+                <tr key={order._id} className="border-b">
+                  <td className="py-3">#{order.orderId}</td>
+                  <td className="py-3">{order.address.email ?? "Unknown"}</td>
+                  <td className="py-3">₹{order.amount.total}</td>
+                  <td className={`py-3 ${colorStatus[order.orderStatus]} font-medium`}>
+                    {order.orderStatus}
                   </td>
                 </tr>
               );

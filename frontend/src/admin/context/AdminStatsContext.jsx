@@ -14,26 +14,40 @@ export const AdminStatsProvider = ({ children }) => {
     revenue: 0,
   });
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const loadStats = async () => {
-      const users = await api.get("/users");
-      const products = await api.get("/products");
-      const orders = await api.get("/orders");
+      try {
+        setLoading(true);
+        const [userRes, productsRes, ordersRes] = await Promise.all([
+          api.get("/users"),
+          api.get("/products"),
+          api.get("/orders/all"),
+        ]);
 
-      const revenue = orders.data.reduce(
-        (sum, item) => sum + (Number(item.total) || 0),
-        0
-      );
+        const userData = userRes.data || [];
+        const productsData = productsRes.data || [];
+        const ordersData = ordersRes.data || [];
 
-      setStats({
-        users: users.data,
-        orders: orders.data,
-        products: products.data,
-        totalUsers: users.data.length,
-        totalProducts: products.data.length,
-        totalOrders: orders.data.length,
-        revenue: revenue.toFixed(2),
-      });
+        const revenue = ordersData.reduce((sum, item) => sum + item.amount?.total, 0)
+
+
+        setStats({
+          users: userData,
+          orders: ordersData,
+          products: productsData,
+          totalUsers: userData.length,
+          totalProducts: productsData.length,
+          totalOrders: ordersData.length,
+          revenue: revenue.toFixed(2),
+        });
+      } catch (error) {
+        console.error("Failed to fetch admin stats:", error);
+      }
+      finally {
+        setLoading(false);
+      }
     };
 
     loadStats();

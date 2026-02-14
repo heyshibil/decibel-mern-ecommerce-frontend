@@ -19,7 +19,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const savedUser = localStorage.getItem("userInfo");
 
-    if (savedUser) setUser(JSON.parse(savedUser));
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    } 
     setLoading(false);
   }, []);
 

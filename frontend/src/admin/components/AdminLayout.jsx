@@ -11,10 +11,13 @@ import { useAuth } from "../../context/AuthContext";
 import { useAppNavigation } from "../../hooks/useAppNavigation";
 
 const AdminLayout = () => {
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, loading, logOut } = useAuth();
   const { goLogin } = useAppNavigation();
+
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    if (loading) return;
+
+    if (!user || !isAdmin) {
       goLogin();
     }
   }, [user, isAdmin, loading, goLogin]);
@@ -93,7 +96,7 @@ const AdminLayout = () => {
         <div className="p-4 border-t">
           <button
             className="w-full flex items-center gap-3 text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 ease-in-out duration-200"
-            onClick={() => navigate("/login")}
+            onClick={() => logOut()}
           >
             <FiLogOut size={20} />
             Logout
