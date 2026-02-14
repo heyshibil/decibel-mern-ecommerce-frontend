@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import StatusDropdown from "../components/StatusDropdown";
 import { useAdminStats } from "../context/AdminStatsContext";
 import api from "../../services/api";
@@ -10,9 +10,13 @@ const AdminOrders = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   // filteringOrderdes according to searchTerm
-  const filteredOrders = ordersList.filter((order) =>
-    order.id.toString().includes(searchQuery)
-  );
+  const filteredOrders = useMemo(() => {
+    return ordersList
+      .filter((order) =>
+        order.orderId.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }, [ordersList, searchQuery]);
 
   // setting orders to state
   useEffect(() => {
@@ -31,8 +35,8 @@ const AdminOrders = () => {
       if (response.status === 200 || response.status === 201) {
         setOrdersList((prev) =>
           prev.map((order) =>
-            order.id === orderId ? { ...order, status: newStatus } : order
-          )
+            order._id === orderId ? { ...order, status: newStatus } : order,
+          ),
         );
 
         toast.success("Order status updated");
@@ -88,48 +92,48 @@ const AdminOrders = () => {
           </thead>
 
           <tbody className="text-gray-700">
-            {filteredOrders.sort((a, b) => new Date(b.date) - new Date(a.date)).map((order) => {
-              return (
-                <tr key={order.orderId} className="border-b">
-                  <td className="py-3 font-medium">#{order.id}</td>
+            {filteredOrders
+              .sort((a, b) => new Date(b.date) - new Date(a.date))
+              .map((order) => {
+                return (
+                  <tr key={order._id} className="border-b">
+                    <td className="py-3 font-medium">#{order.orderId}</td>
 
-                  <td className="py-3 text-sm text-gray-500">
-                    {(() => {
-                      const names = order.items.map((item) => item.productName);
+                    <td className="py-3 text-sm text-gray-500">
+                      {(() => {
+                        const names = order.items.map((item) => item.name);
 
-                      if (names.length === 1) {
-                        return names[0];
-                      }
+                        if (names.length === 1) {
+                          return names[0];
+                        }
 
-                      return `${names[0]} + ${names.length - 1} more`;
-                    })()}
-                  </td>
+                        return `${names[0]} + ${names.length - 1} more`;
+                      })()}
+                    </td>
 
-                  <td className="py-3 font-medium">₹{order.total}</td>
+                    <td className="py-3 font-medium">₹{order.amount.total}</td>
 
-                  <td className="py-3 max-w-xs truncate">
-                    {order.address.firstName + " " + order.address.lastName}
-                    <br />
-                    {order.address.address}
-                    <br />
-                    {order.address.country}
-                  </td>
+                    <td className="py-3 max-w-xs truncate">
+                      {order.address.firstName + " " + order.address.lastName}
+                      <br />
+                      {order.address.address}
+                      <br />
+                      {order.address.country}
+                    </td>
 
-                  <td className="py-3">
-                    {formatDate(order.date)}
-                  </td>
+                    <td className="py-3">{formatDate(order.createdAt)}</td>
 
-                  <td className="py-3">
-                    <StatusDropdown
-                      value={order.status}
-                      onChange={(newStatus) =>
-                        handleStatusChange(newStatus, order.id)
-                      }
-                    />
-                  </td>
-                </tr>
-              );
-            })}
+                    <td className="py-3">
+                      <StatusDropdown
+                        value={order.status}
+                        onChange={(newStatus) =>
+                          handleStatusChange(newStatus, order._id)
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
 
             {ordersList.length === 0 && (
               <tr>

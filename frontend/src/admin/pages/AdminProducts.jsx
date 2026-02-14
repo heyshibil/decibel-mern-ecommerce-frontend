@@ -146,8 +146,8 @@ const AdminProducts = () => {
 
           <tbody className="text-gray-700">
             {filteredProducts.map((product) => (
-              <tr key={product.id} className="border-b">
-                <td className="py-3">{product.id}</td>
+              <tr key={product._id} className="border-b">
+                <td className="py-3">{product.sku}</td>
                 <td className="py-3">
                   <div className="flex items-center justify-center w-20 h-20 mx-3 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
                     <img
