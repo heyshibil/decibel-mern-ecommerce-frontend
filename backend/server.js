@@ -9,11 +9,15 @@ import orderRoutes from "./routes/orderRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { cloudinaryConfig } from "./config/cloudinary.js";
 
 await connectDB();
 
 const app = express();
 const PORT = 5000;
+
+// Initialize Cloudinary
+cloudinaryConfig();
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
