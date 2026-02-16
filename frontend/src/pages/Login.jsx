@@ -9,6 +9,14 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // show toast for 403 status 
+  useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("message") === "blocked") {
+    toast.error("Access Denied: Your account has been suspended by the administrator.");
+  }
+}, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 

@@ -17,7 +17,7 @@ export const protect = async (req, res, next) => {
           .json({ message: "User no longer exists. Access denied." });
       }
 
-      if (user && user.isBlocked) {
+      if (user.isBlocked) {
         return res
           .status(403)
           .json({
