@@ -16,6 +16,8 @@ api.interceptors.response.use(
 
     // Token expired or invalid
     if (errorStatus === 401) {
+      localStorage.removeItem("userInfo");
+      window.location.replace("/login");
     }
 
     if (errorStatus === 403) {
