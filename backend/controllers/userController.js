@@ -1,17 +1,6 @@
 import { User } from "../models/User.js";
 import { generateToken } from "../utils/generateToken.js";
 
-export const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find({}).select("-password");
-    return res.status(200).json(users);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Server Error: Could not fetch users",
-    });
-  }
-};
-
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -143,5 +132,49 @@ export const updateUserProfile = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Server error during update", error: error.message });
+  }
+};
+
+// Get all users **admin**
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}).select("-password");
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server Error: Could not fetch users",
+    });
+  }
+};
+
+// Block user **admin**
+export const toggleUserBlock = async (req, res) => {
+  try {
+    const { id } = req.params.id;
+    const { isBlocked } = req.body;
+
+    // Prevent Admin from blocking themselves
+    if (id === req.user._id.toString()) {
+      return res
+        .status(400)
+        .json({ message: "You cannot block your own admin account." });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { isBlocked },
+      { new: true, runValidators: true },
+    );
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    return res
+      .status(200)
+      .json({
+        message: `User has been ${user.isBlocked ? "blocked" : "unblocked"}`,
+        user
+      });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error during user status update" });
   }
 };

@@ -4,6 +4,7 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  toggleUserBlock,
   updateUserProfile,
 } from "../controllers/userController.js";
 import { limiter } from "../middlewares/rateLimiter.js";
@@ -16,6 +17,9 @@ router.get("/", protect, admin, getAllUsers);
 router.post("/register", registerUser);
 router.post("/login", limiter, loginUser);
 router.post("/logout", logoutUser);
-router.patch("/profile", protect, updateUserProfile)
+router.patch("/profile", protect, updateUserProfile);
+
+//admin routes
+router.patch("/block/:id", admin, protect, toggleUserBlock);
 
 export default router;
