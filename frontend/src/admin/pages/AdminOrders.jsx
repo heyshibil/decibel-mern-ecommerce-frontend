@@ -5,7 +5,7 @@ import api from "../../services/api";
 import toast from "react-hot-toast";
 
 const AdminOrders = () => {
-  const { stats } = useAdminStats();
+  const { stats, refreshStats } = useAdminStats();
   const [ordersList, setOrdersList] = useState(stats.orders || []);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -32,14 +32,9 @@ const AdminOrders = () => {
         status: newStatus,
       });
 
-      if (response.status === 200 || response.status === 201) {
-        setOrdersList((prev) =>
-          prev.map((order) =>
-            order._id === orderId ? { ...order, status: newStatus } : order,
-          ),
-        );
-
-        toast.success("Order status updated");
+      if (response.status === 200) {
+        refreshStats();
+        toast.success(`Order status updated to ${newStatus}`);
       }
     } catch (error) {
       toast.error("Failed to update status");
@@ -125,7 +120,7 @@ const AdminOrders = () => {
 
                     <td className="py-3">
                       <StatusDropdown
-                        value={order.status}
+                        value={order.orderStatus}
                         onChange={(newStatus) =>
                           handleStatusChange(newStatus, order._id)
                         }

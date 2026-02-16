@@ -5,7 +5,7 @@ const StatusDropdown = ({ value, onChange }) => {
   const [open, setOpen] = useState(false);
 
   const statuses = [
-    { label: "Ordered", color: "text-gray-500" },
+    { label: "Processing", color: "text-gray-500" },
     { label: "Shipped", color: "text-amber-500" },
     { label: "Delivered", color: "text-green-600" },
     { label: "Cancelled", color: "text-red-500" },
