@@ -17,6 +17,14 @@ export const protect = async (req, res, next) => {
           .json({ message: "User no longer exists. Access denied." });
       }
 
+      if (user && user.isBlocked) {
+        return res
+          .status(403)
+          .json({
+            message: "Your access has been restricted. Please contact support",
+          });
+      }
+
       req.user = user;
       next();
     } catch (error) {
