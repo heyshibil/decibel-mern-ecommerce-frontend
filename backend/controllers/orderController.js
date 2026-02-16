@@ -85,7 +85,7 @@ export const updateOrder = async (req, res) => {
 
     const order = await Order.findByIdAndUpdate(
       id,
-      { status },
+      { orderStatus: status },
       { new: true, runValidators: true },
     );
 
@@ -93,7 +93,7 @@ export const updateOrder = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    return res.status(200).json(order);
+    return res.status(200).json(order.orderStatus);
   } catch (error) {
     console.error(error);
     return res
