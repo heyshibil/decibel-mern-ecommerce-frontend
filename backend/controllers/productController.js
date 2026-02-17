@@ -5,8 +5,23 @@ import fs from "node:fs";
 // GET all products
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find();
-    return res.status(200).json(products);
+    const searchTerm = req.query.q;
+
+    if (!searchTerm || searchTerm.trim() === "") {
+      const products = await Product.find();
+      return res.status(200).json(products);
+    }
+
+    const products = await Product.find({
+      $or: [
+        { productName: { $regex: searchTerm, $options: "i" } },
+        { description: { $regex: searchTerm, $options: "i" } },
+        { brand: { $regex: searchTerm, $options: "i" } },
+        { type: { $regex: searchTerm, $options: "i" } },
+      ],
+    });
+
+    return res.status(200).json(products)
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Failed to fetch products" });
