@@ -6,9 +6,14 @@ export const SearchProvider = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
 
+  // Clear search
+  const clearSearch = () => {
+    setSearchTerm("");
+  };
+
   return (
     <SearchContext.Provider
-      value={{ searchTerm, results, setSearchTerm, setResults }}
+      value={{ searchTerm, results, setSearchTerm, setResults, clearSearch }}
     >
       {children}
     </SearchContext.Provider>
