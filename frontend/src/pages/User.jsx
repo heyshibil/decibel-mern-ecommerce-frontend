@@ -11,6 +11,9 @@ import api from "../services/api";
 import { showError, showSuccess } from "../utils/toastService";
 import { useOrders } from "../context/OrdersContext";
 import { useAppNavigation } from "../hooks/useAppNavigation";
+import { mirage } from "ldrs";
+
+mirage.register();
 
 const User = () => {
   const { user, updateUser } = useAuth();
@@ -79,6 +82,14 @@ const User = () => {
     setNewEmail(user?.email || "");
     setEditingEmail(false);
   };
+
+  if (saving) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <l-mirage size="60" speed="2.5" color="black"></l-mirage>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen w-full lg:pt-24 pb-12 lg:pb-24 bg-gray-50">

@@ -3,9 +3,12 @@ import { FiLock, FiUnlock } from "react-icons/fi";
 import { useAdminStats } from "../context/AdminStatsContext";
 import api from "../../services/api";
 import { showError, showSuccess } from "../../utils/toastService";
+import { mirage } from "ldrs";
+
+mirage.register();
 
 const AdminUsers = () => {
-  const { stats, refreshStats } = useAdminStats();
+  const { stats, loading, refreshStats } = useAdminStats();
   const [usersList, setUsersList] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -47,6 +50,14 @@ const AdminUsers = () => {
     true: "text-green-600",
     false: "text-gray-500",
   };
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <l-mirage size="60" speed="2.5" color="black"></l-mirage>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 w-full min-h-screen bg-gray-50">

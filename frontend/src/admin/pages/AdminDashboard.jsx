@@ -3,15 +3,26 @@ import { FiUsers, FiShoppingBag, FiBox } from "react-icons/fi";
 import { FaRupeeSign } from "react-icons/fa";
 import { useAdminStats } from "../context/AdminStatsContext";
 import ChartSection from "../components/ChartSection";
+import { mirage } from "ldrs";
+
+mirage.register();
 
 const AdminDashboard = () => {
-  const { stats } = useAdminStats();
+  const { stats, loading } = useAdminStats();
   const { users, orders, totalUsers, totalProducts, totalOrders, revenue } = stats;
 
   const colorStatus = {
     Processing : "text-gray-400",
     Shipped : "text-amber-500",
     Delivered : "text-green-500",
+  }
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <l-mirage size="60" speed="2.5" color="black"></l-mirage>
+      </div>
+    );
   }
 
   return (

@@ -5,6 +5,9 @@ import { useAdminStats } from "../context/AdminStatsContext";
 import AddProducts from "../components/AddProducts";
 import api from "../../services/api";
 import { showError, showSuccess } from "../../utils/toastService";
+import { mirage } from "ldrs";
+
+mirage.register();
 
 // Helper function to resolve image path (handles both Cloudinary URLs and relative paths)
 const getImagePath = (imagePath) => {
@@ -14,7 +17,7 @@ const getImagePath = (imagePath) => {
 };
 
 const AdminProducts = () => {
-  const { stats, refreshStats } = useAdminStats();
+  const { stats, refreshStats, loading } = useAdminStats();
   const products = stats.products;
 
   const emptyProduct = {
@@ -89,6 +92,14 @@ const AdminProducts = () => {
       console.error("Failed to delete product:", error);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <l-mirage size="60" speed="2.5" color="black"></l-mirage>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 w-full min-h-screen bg-gray-50">

@@ -6,9 +6,12 @@ import EmptyMessage from "../components/EmptyMessage";
 import { useOrders } from "../context/OrdersContext";
 import AlertMessage from "../components/AlertMessage";
 import { getImagePath } from "../utils/getImage";
+import { mirage } from "ldrs";
+
+mirage.register();
 
 const Orders = () => {
-  const { orders, cancelOrder } = useOrders();
+  const { orders, cancelOrder, loading } = useOrders();
 
   const [showAlert, setShowAlert] = useState(false);
   const [orderId, setOrderId] = useState(null);
@@ -23,6 +26,14 @@ const Orders = () => {
     setShowAlert(false);
     setOrderId(null);
   };
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <l-mirage size="60" speed="2.5" color="black"></l-mirage>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen w-full lg:pt-24 pb-12 lg:pb-24 bg-gray-50">
