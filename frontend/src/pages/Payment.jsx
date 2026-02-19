@@ -8,6 +8,7 @@ import { useOrders } from "../context/OrdersContext";
 const Payment = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [displayTotal, setDisplayTotal] = useState(0);
   const { total, cart, subTotal, gst, handleClearCart } = useWishlistCart();
   const [upi, setUPI] = useState("");
   const { goCheckout, goOrders } = useAppNavigation();
@@ -57,7 +58,10 @@ const Payment = () => {
       };
 
       const data = await createNewOrder(orderData);
-      await handleClearCart()
+      
+      // Store total before clearing the cart
+      setDisplayTotal(total);
+      await handleClearCart();
       
       // Set success only after successful order creation
       setIsSuccess(true);
@@ -126,7 +130,7 @@ const Payment = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <span className="text-lg font-semibold">Total Amount</span>
-            <span className="text-2xl font-bold text-blue-600">₹{total}</span>
+            <span className="text-2xl font-bold text-blue-600">₹{displayTotal || total}</span>
           </div>
         </div>
 
@@ -202,8 +206,8 @@ const Payment = () => {
                 Payment Successful!
               </h3>
               <p className="text-center text-gray-600 mb-4">
-                Your payment of{" "}
-                <span className="font-bold text-green-600">₹{total}</span> has
+                Your payment of
+                <span className="font-bold text-green-600"> ₹{displayTotal}</span> has
                 been processed successfully.
               </p>
               <button
