@@ -5,6 +5,7 @@ import { useProducts } from "../context/ProductContext";
 import Header from "../components/Header";
 import { IoFilter } from "react-icons/io5";
 import { useSearch } from "../context/SearchContext";
+import { MdOutlineSearchOff } from "react-icons/md";
 import api from "../services/api";
 import Card from "../components/Card";
 
@@ -149,20 +150,36 @@ const Products = () => {
           </div>
         </div>
 
-        <div className="mt-6 lg:mt-12 grid grid-cols-1 lg:grid-cols-4 gap-5 lg:gap-10 w-[1fr, 1fr, 1fr, 1fr]">
-          {filter.map((product) => {
-            return (
-              <Card
-                key={product._id}
-                _id={product._id}
-                productName={product.productName}
-                type={product.type}
-                price={product.price}
-                img={product.image}
-              />
-            );
-          })}
-        </div>
+        {filter.length === 0 ? (
+          <div className="w-full h-[500px] flex flex-col items-center justify-center gap-6 mt-12">
+            <MdOutlineSearchOff className="text-7xl text-gray-300" />
+            <div className="text-center">
+              <h3 className="text-2xl font-semibold text-gray-800 mb-2">
+                No Products Found
+              </h3>
+              <p className="text-gray-500 text-lg">
+                {searchTerm.trim()
+                  ? `No products match your search for "${searchTerm}"`
+                  : "No products available at the moment"}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-6 lg:mt-12 grid grid-cols-1 lg:grid-cols-4 gap-5 lg:gap-10 w-[1fr, 1fr, 1fr, 1fr]">
+            {filter.map((product) => {
+              return (
+                <Card
+                  key={product._id}
+                  _id={product._id}
+                  productName={product.productName}
+                  type={product.type}
+                  price={product.price}
+                  img={product.image}
+                />
+              );
+            })}
+          </div>
+        )}
 
         {/* <div className="w-full mx-auto pt-12 lg:pt-24">
           <Footer />
