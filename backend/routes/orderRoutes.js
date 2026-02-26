@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  cancelOrder,
   createOrder,
   getAllOrders,
   getOrders,
@@ -13,6 +14,7 @@ const router = express.Router();
 router.get("/all", protect, admin, getAllOrders);
 router.get("/", protect, getOrders);
 router.post("/", protect, createOrder);
+router.patch("/cancel/:id", cancelOrder);
 
 // admin routes
 router.patch("/:id", protect, admin, updateOrder);

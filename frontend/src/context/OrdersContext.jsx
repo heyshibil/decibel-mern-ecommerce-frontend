@@ -38,34 +38,35 @@ export const OrderProvider = ({ children }) => {
   // create new order
   const createNewOrder = async (orderData) => {
     try {
-      setLoading(true)
+      setLoading(true);
       const newOrder = await createOrderApi(orderData);
 
       // update new order on the top
       setOrders((prev) => [newOrder, ...prev]);
       return newOrder;
-    } 
-    catch (error) {
+    } catch (error) {
       showError(error?.response?.data?.message || "Payment processing failed");
-      
+
       // throw error to stop processing
       throw error;
-    }
-    finally {
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
   //cancel order
   const cancelOrder = async (orderId) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order._id === orderId ? { ...order, status: "Cancelled" } : order,
-      ),
-    );
-
     try {
-      await api.patch(`/orders/${orderId}`, { status: "Cancelled" });
+      const response = await api.patch(`/orders/cancel/${orderId}`);
+
+      if (response.status === 200) {
+        const updatedOrder = response.data;
+
+        setOrders((prev) =>
+          prev.map((order) => (order._id === orderId ? updatedOrder : order)),
+        );
+      }
+
       showSuccess(`Order with id ${orderId} has been cancelled`);
     } catch (error) {
       console.error("Failed to cancel:", error);
@@ -74,7 +75,9 @@ export const OrderProvider = ({ children }) => {
   };
 
   return (
-    <OrderContext.Provider value={{ orders, createNewOrder, cancelOrder, loading }}>
+    <OrderContext.Provider
+      value={{ orders, createNewOrder, cancelOrder, loading }}
+    >
       {children}
     </OrderContext.Provider>
   );

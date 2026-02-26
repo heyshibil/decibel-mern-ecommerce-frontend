@@ -71,6 +71,37 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
+// Cancel order
+export const cancelOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.orderStatus === "Shipped" || order.orderStatus === "Delivered") {
+      return res
+        .status(400)
+        .json({
+          message: `Cannot cancel an order that is already ${order.status}`,
+        });
+    }
+
+    // cancel order
+    order.orderStatus = "Cancelled";
+    const updatedOrder = await order.save();
+
+    return res.status(200).json(updatedOrder);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Cancellation failed", error: error.message });
+  }
+};
+
 // Update order **admin**
 export const updateOrder = async (req, res) => {
   try {
