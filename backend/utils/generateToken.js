@@ -27,5 +27,5 @@ export const generateTokens = (res, userId) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  return refreshToken;
+  return { accessToken, refreshToken };
 };

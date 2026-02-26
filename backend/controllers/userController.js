@@ -23,11 +23,12 @@ export const registerUser = async (req, res) => {
       password,
     });
 
-    // JWT refresh-token generation
-    const refreshToken = generateTokens(res, savedUser._id);
-    newUser.refreshToken = refreshToken;
-    
     const savedUser = await newUser.save();
+
+    // JWT refresh-token generation
+    const { refreshToken } = generateTokens(res, savedUser._id);
+    savedUser.refreshToken = refreshToken;
+    await savedUser.save();
 
     // registration successful
     return res.status(201).json({
@@ -70,7 +71,7 @@ export const loginUser = async (req, res) => {
       }
 
       // JWT refresh-token generation
-      const refreshToken = generateTokens(res, user._id);
+      const { refreshToken } = generateTokens(res, user._id);
       user.refreshToken = refreshToken;
       await user.save();
 
