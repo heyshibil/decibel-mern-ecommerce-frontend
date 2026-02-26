@@ -79,6 +79,7 @@ const ProductDetails = () => {
       <Header />
       <div className="w-11/12 mx-auto pt-6 lg:pt-12">
         <div className="w-full flex justify-between items-center mb-6 lg:mb-12">
+          {/* Subhead - Product details */}
           <div className="w-fit">
             <SubHead head="Product Details" />
             <div className="bg-brand h-[1.5px]" />
@@ -89,11 +90,11 @@ const ProductDetails = () => {
           <div id="left" className="w-full lg:w-1/2 flex items-center justify-center lg:justify-start">
             <div
               id="productImg-box"
-              className="w-full max-w-sm sm:max-w-md lg:w-3/4 lg:h-[550px] bg-gray-200 rounded-lg sm:rounded-xl flex items-center justify-center mt-4 sm:mt-0"
+              className="w-full lg:max-w-none lg:w-[85%] lg:rounded-none max-w-sm sm:max-w-md lg:w-3/4 lg:h-[550px] bg-gray-200 rounded-lg sm:rounded-xl flex items-center justify-center mt-4 sm:mt-0"
             >
               {product.image ? (
                 <img
-                  className="h-full w-full max-h-[350px] sm:max-h-none object-cover rounded-lg sm:rounded-xl"
+                  className="h-full w-full max-h-[350px] sm:max-h-none object-cover rounded-lg sm:rounded-xl lg:rounded-none"
                   src={getImagePath(product?.image)}
                   alt={product.productName}
                   onError={(e) => {
