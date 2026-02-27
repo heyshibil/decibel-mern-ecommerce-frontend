@@ -8,6 +8,11 @@ import { useOrders } from "../context/OrdersContext";
 const Payment = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Failure States
+  const [isFailed, setIsFailed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const [displayTotal, setDisplayTotal] = useState(0);
   const { total, cart, subTotal, gst, handleClearCart } = useWishlistCart();
   const [upi, setUPI] = useState("");
@@ -17,7 +22,6 @@ const Payment = () => {
 
   const storedData = JSON.parse(localStorage.getItem(`addressOf${user._id}`));
 
-  // destructuring storedData
   const {
     firstName,
     lastName,
@@ -44,36 +48,38 @@ const Payment = () => {
 
     try {
       setIsProcessing(true);
+      setIsFailed(false); // Reset failure state on new attempt
 
-      // creating new order
       const orderData = {
         items: cart,
-        amount: {
-          subTotal,
-          gst,
-          total,
-        },
+        amount: { subTotal, gst, total },
         address: storedData,
         upiId: upi,
       };
 
-      const data = await createNewOrder(orderData);
-      
-      // Store total before clearing the cart
+      await createNewOrder(orderData);
+
       setDisplayTotal(total);
       await handleClearCart();
-      
-      // Set success only after successful order creation
       setIsSuccess(true);
     } catch (error) {
       console.error("Payment error:", error);
-      showError(
+      // Trigger Failure UI
+      setIsFailed(true);
+      setErrorMessage(
         error?.response?.data?.message ||
           "Payment processing failed. Please try again.",
       );
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  // Reset function for the Retry button
+  const handleRetry = () => {
+    setIsFailed(false);
+    setErrorMessage("");
+    setUPI(""); 
   };
 
   return (
@@ -88,6 +94,7 @@ const Payment = () => {
             <button
               onClick={goCheckout}
               className="text-gray-500 hover:underline font-medium text-sm"
+              disabled={isProcessing || isSuccess}
             >
               Edit
             </button>
@@ -107,88 +114,26 @@ const Payment = () => {
           </div>
         </div>
 
-        {/* UPI ID Section */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold mb-4">Payment Method</h3>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              UPI ID <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Enter your UPI ID"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={(e) => setUPI(e.target.value)}
-            />
-            <p className="text-xs text-gray-500 mt-1 ml-3">
-              eg: name@okhdfcbank
-            </p>
-          </div>
-        </div>
-
         {/* Amount Section */}
-        <div className="mb-8">
+        <div className="mb-8 border-b pb-6">
           <div className="flex justify-between items-center">
             <span className="text-lg font-semibold">Total Amount</span>
-            <span className="text-2xl font-bold text-blue-600">₹{displayTotal || total}</span>
+            <span className="text-2xl font-bold text-blue-600">
+              ₹{displayTotal || total}
+            </span>
           </div>
         </div>
 
-        {/* Mock Razorpay Section */}
-        {!isSuccess ? (
-          <div
-            className={`mb-4 transform transition-all duration-500 ease-out ${
-              isProcessing ? "scale-105 shadow-2xl" : "scale-100 shadow-md"
-            }`}
-          >
-            <div
-              className={`bg-gray-50 border border-gray-200 rounded-lg p-6 flex flex-col items-center transition-all duration-500 ${
-                isProcessing ? "bg-blue-50 border-blue-300" : ""
-              }`}
-            >
-              <img
-                src="https://razorpay.com/favicon.png"
-                alt="Razorpay"
-                className={`mb-2 transition-all duration-500 ${
-                  isProcessing ? "w-16 h-16 animate-pulse" : "w-12 h-12"
-                }`}
-              />
-              <p className="text-lg font-semibold mb-2">
-                Pay securely with Razorpay
-              </p>
-              <button
-                className={`w-full mt-4 py-3 rounded-lg font-semibold transition-all duration-500 ${
-                  isProcessing
-                    ? "bg-green-600 text-white cursor-not-allowed"
-                    : "bg-blue-600 text-white hover:bg-blue-700"
-                }`}
-                type="button"
-                onClick={handlePayment}
-                disabled={isProcessing}
-              >
-                {isProcessing ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    Processing...
-                  </span>
-                ) : (
-                  `Pay ₹${total}`
-                )}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div
-            className={`mb-4 transform transition-all duration-700 ease-out scale-100 shadow-2xl`}
-          >
-            <div
-              className={`bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-8 flex flex-col items-center animate-in fade-in zoom-in duration-700`}
-            >
+        {/* DYNAMIC PAYMENT UI SECTION */}
+        {isSuccess ? (
+          /* --- SUCCESS UI --- */
+          <div className="mb-4 transform transition-all duration-700 ease-out scale-100 shadow-2xl">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-8 flex flex-col items-center animate-in fade-in zoom-in duration-700">
               <div className="relative w-20 h-20 mb-4 flex items-center justify-center">
                 <div className="absolute inset-0 bg-green-200 rounded-full animate-ping opacity-75"></div>
                 <div className="relative bg-green-500 rounded-full p-4 flex items-center justify-center">
                   <svg
-                    className="w-10 h-10 text-white animate-pulse"
+                    className="w-10 h-10 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -206,19 +151,113 @@ const Payment = () => {
                 Payment Successful!
               </h3>
               <p className="text-center text-gray-600 mb-4">
-                Your payment of
-                <span className="font-bold text-green-600"> ₹{displayTotal}</span> has
-                been processed successfully.
+                Your payment of{" "}
+                <span className="font-bold text-green-600">
+                  ₹{displayTotal}
+                </span>{" "}
+                has been processed.
               </p>
               <button
                 className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all duration-300"
-                type="button"
                 onClick={() => goOrders(user._id)}
               >
                 View Orders
               </button>
             </div>
           </div>
+        ) : isFailed ? (
+          /* --- FAILED UI (NEW) --- */
+          <div className="mb-4 transform transition-all duration-700 ease-out scale-100 shadow-lg">
+            <div className="bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-300 rounded-lg p-8 flex flex-col items-center animate-in fade-in zoom-in duration-500">
+              <div className="relative w-20 h-20 mb-4 flex items-center justify-center">
+                <div className="absolute inset-0 bg-red-200 rounded-full animate-pulse opacity-75"></div>
+                <div className="relative bg-red-500 rounded-full p-4 flex items-center justify-center">
+                  <svg
+                    className="w-10 h-10 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={3}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-red-600 mb-2 text-center">
+                Payment Failed
+              </h3>
+              <p className="text-center text-gray-600 mb-6">{errorMessage}</p>
+              <button
+                className="w-full py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-all duration-300"
+                onClick={handleRetry}
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* --- DEFAULT / PROCESSING UI --- */
+          <>
+            {/* UPI ID Section (Only show if not success/failed) */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-4">Payment Method</h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  UPI ID <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={upi}
+                  placeholder="Enter your UPI ID"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) => setUPI(e.target.value)}
+                  disabled={isProcessing}
+                />
+                <p className="text-xs text-gray-500 mt-1 ml-3">
+                  eg: name@okhdfcbank
+                </p>
+              </div>
+            </div>
+
+            <div
+              className={`mb-4 transform transition-all duration-500 ease-out ${isProcessing ? "scale-105 shadow-2xl" : "scale-100 shadow-md"}`}
+            >
+              <div
+                className={`bg-gray-50 border border-gray-200 rounded-lg p-6 flex flex-col items-center transition-all duration-500 ${isProcessing ? "bg-blue-50 border-blue-300" : ""}`}
+              >
+                <img
+                  src="https://razorpay.com/favicon.png"
+                  alt="Razorpay"
+                  className={`mb-2 transition-all duration-500 ${isProcessing ? "w-16 h-16 animate-pulse" : "w-12 h-12"}`}
+                />
+                <p className="text-lg font-semibold mb-2">
+                  Pay securely with Razorpay
+                </p>
+                <button
+                  className={`w-full mt-4 py-3 rounded-lg font-semibold transition-all duration-500 ${
+                    isProcessing
+                      ? "bg-blue-400 text-white cursor-not-allowed"
+                      : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
+                  onClick={handlePayment}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      Processing...
+                    </span>
+                  ) : (
+                    `Pay ₹${total}`
+                  )}
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>
