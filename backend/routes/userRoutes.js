@@ -7,6 +7,7 @@ import {
   registerUser,
   toggleUserBlock,
   updateUserProfile,
+  verifyEmail,
 } from "../controllers/userController.js";
 import { limiter } from "../middlewares/rateLimiter.js";
 import { protect } from "../middlewares/authMiddleware.js";
@@ -20,6 +21,7 @@ router
   .post("/login", limiter, loginUser)
   .post("/logout", logoutUser)
   .patch("/profile", protect, updateUserProfile)
+  .post("/verify-otp", verifyEmail)
   .get("/refresh", refreshAccessToken);
 
 //admin routes
