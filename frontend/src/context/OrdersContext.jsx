@@ -74,9 +74,22 @@ export const OrderProvider = ({ children }) => {
     }
   };
 
+  // Refresh orders
+  const refreshOrders = async () => {
+    try {
+      setLoading(true);
+      const data = await getOrdersApi();
+      setOrders(data);
+    } catch (error) {
+      console.error("Failed to refresh orders");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <OrderContext.Provider
-      value={{ orders, createNewOrder, cancelOrder, loading }}
+      value={{ orders, createNewOrder, cancelOrder, refreshOrders, loading }}
     >
       {children}
     </OrderContext.Provider>
