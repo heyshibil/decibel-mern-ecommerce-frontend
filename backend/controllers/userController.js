@@ -163,8 +163,14 @@ export const loginUser = async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    // user && comparing password with matchPassword method (model)
+    // user validation | comparing password with matchPassword method (model)
     if (user && (await user.matchPassword(password))) {
+      if (!user.isVerified) {
+        return res
+          .status(403)
+          .json({ message: "Please verify your email before logging in." });
+      }
+
       if (user.isBlocked) {
         return res.status(403).json({
           message: "Your access has been restricted. Please contact support",
