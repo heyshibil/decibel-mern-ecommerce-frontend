@@ -21,7 +21,7 @@ export const getAllProducts = async (req, res) => {
       ],
     });
 
-    return res.status(200).json(products)
+    return res.status(200).json(products);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Failed to fetch products" });
@@ -37,7 +37,10 @@ export const getProductById = async (req, res) => {
     return res.status(200).json(product);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Invalid product id" });
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid product id format" });
+    }
+    return res.status(500).json({ message: "Failed to fetch product" });
   }
 };
 
