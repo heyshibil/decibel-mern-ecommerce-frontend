@@ -85,6 +85,8 @@ export const removeFromCart = async (req, res) => {
       { new: true },
     ).populate("cart.product");
 
+    if (!user) return res.status(404).json({ message: "User not found" });
+
     return res.status(200).json(user.cart);
   } catch (error) {
     console.error(error);
