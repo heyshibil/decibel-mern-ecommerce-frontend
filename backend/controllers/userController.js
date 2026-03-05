@@ -213,11 +213,13 @@ export const logoutUser = async (req, res) => {
   // expires tokens //
   res.cookie("accessToken", "", {
     httpOnly: true,
+    sameSite: "None",
     expires: new Date(0),
   });
 
   res.cookie("refreshToken", "", {
     httpOnly: true,
+    sameSite: "None",
     expires: new Date(0),
   });
 
