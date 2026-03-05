@@ -152,7 +152,7 @@ export const WishlistCartProvider = ({ children }) => {
     const total = (subTotal + gst).toFixed(2);
 
     return { subTotal, gst, total };
-  });
+  }, [cart]);
 
   return (
     <WishlistCartContext.Provider
