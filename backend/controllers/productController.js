@@ -1,7 +1,7 @@
 import { Product } from "../models/Product.js";
 import { v2 as cloudinary } from "cloudinary";
 
-// Helper: upload a buffer to Cloudinary using an upload stream
+// upload a buffer to Cloudinary using an upload stream
 const uploadBufferToCloudinary = (buffer, options = {}) => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
