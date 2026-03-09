@@ -7,7 +7,7 @@ export const sendVerificationEmail = async (email, otp) => {
   try {
     const { data, error } = await resend.emails.send({
       // Use 'onboarding@resend.dev' if you haven't verified a custom domain yet
-      from: "noreply@decibelaudios.com", 
+      from: "DECIBEL <onboarding@resend.dev>",
       to: [email],
       subject: "Verify Your DECIBEL Account",
       html: `
@@ -41,7 +41,7 @@ export const sendVerificationEmail = async (email, otp) => {
 export const sendPasswordResetEmail = async (email, otp) => {
   try {
     const { data, error } = await resend.emails.send({
-      from: "noreply@decibelaudios.com",
+      from: "DECIBEL <onboarding@resend.dev>",
       to: [email],
       subject: "Reset Your DECIBEL Password",
       html: `
