@@ -4,7 +4,7 @@ import HomeGrid from "../components/HomeGrid"
 import Bestsellers from "../components/Bestsellers";
 import Features from "../components/Features";
 import Footer from "../components/Footer";
-import ProductGrid from "../components/productGrid";
+import ProductGrid from "../components/ProductGrid";
 import TestimonialGrid from "../components/TestimonialGrid"
 import Tailer from "../components/Tailer";
 
