@@ -6,6 +6,9 @@ export const limiter = rateLimit({
   standardHeaders: "draft-8",
   legacyHeaders: false,
   ipv6Subnet: 56,
+  keyGenerator: (req) => {
+    return req.body?.email || req.ip;
+  },
   message: {
     message: "Too many login attempts. Please try again after 15 minutes.",
   },

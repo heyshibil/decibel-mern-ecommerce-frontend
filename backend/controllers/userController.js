@@ -17,9 +17,19 @@ export const registerUser = async (req, res) => {
     const userExists = await User.findOne({ email });
     if (userExists) {
       if (!userExists.isVerified) {
-        return res.status(400).json({
-          message:
-            "Account exists but is unverified. Please request a new OTP.",
+        // Re-registration: refresh OTP and let them proceed
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+
+        userExists.verificationOTP = otp;
+        userExists.otpExpire = otpExpire;
+
+        await userExists.save();
+        await sendVerificationEmail(userExists.email, otp);
+
+        return res.status(200).json({
+          message: "Registration successful. Please verify your email.",
+          email: userExists.email,
         });
       }
 
@@ -53,6 +63,12 @@ export const registerUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Register Error:", error);
+    // Handle MongoDB duplicate key error
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "Account exists but is unverified. Please request a new OTP.",
+      });
+    }
     return res
       .status(500)
       .json({ message: "Server error. Please try again later" });
@@ -211,19 +227,19 @@ export const logoutUser = async (req, res) => {
   }
 
   // expires tokens //
-    res.cookie("accessToken", "", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      expires: new Date(0),
-    });
+  res.cookie("accessToken", "", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    expires: new Date(0),
+  });
 
-    res.cookie("refreshToken", "", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      expires: new Date(0),
-    });
+  res.cookie("refreshToken", "", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    expires: new Date(0),
+  });
 
   res.status(200).json({ message: "Logged out successfully" });
 };
