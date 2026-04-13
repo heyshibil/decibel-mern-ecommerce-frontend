@@ -40,8 +40,13 @@ export const WishlistCartProvider = ({ children }) => {
           ? wishlistData.filter((item) => item !== null)
           : [];
 
+        // filtering cart from deleted products (where product is null)
+        const cleanCart = Array.isArray(cartData)
+          ? cartData.filter((item) => item && item.product !== null)
+          : [];
+
         setWishlist(cleanWishlist);
-        setCart(cartData);
+        setCart(cleanCart);
       } catch (error) {
         console.error(error);
         showError(
@@ -144,7 +149,7 @@ export const WishlistCartProvider = ({ children }) => {
   // memoized calculations
   const { subTotal, gst, total } = useMemo(() => {
     const subTotal = cart.reduce(
-      (sum, item) => sum + item.product.price * item.quantity,
+      (sum, item) => sum + (item?.product?.price || 0) * (item?.quantity || 1),
       0,
     );
 
