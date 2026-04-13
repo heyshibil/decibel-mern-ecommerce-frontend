@@ -19,12 +19,14 @@ const PORT = process.env.PORT || 5000;
 cloudinaryConfig();
 
 // CORS
-app.use(
-  cors({
-    origin: ["http://localhost:5173", "https://decibel-mern-ecommerce-frontend-qto.vercel.app"],
-    credentials: true,
-  }),
-);
+// app.use(
+//   cors({
+//     origin: ["http://localhost:5173", "https://decibel-mern-ecommerce-frontend-qto.vercel.app"],
+//     credentials: true,
+//   }),
+// );
+
+app.use(cors());
 
 // middlewares
 app.use(express.json());
