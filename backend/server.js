@@ -21,7 +21,7 @@ cloudinaryConfig();
 // CORS
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "https://decibel-mern-ecommerce-frontend-qto.vercel.app",
+    origin: ["http://localhost:5173", "https://decibel-mern-ecommerce-frontend-qto.vercel.app"],
     credentials: true,
   }),
 );
