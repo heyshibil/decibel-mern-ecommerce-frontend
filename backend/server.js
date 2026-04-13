@@ -18,15 +18,27 @@ const PORT = process.env.PORT || 5000;
 // Initialize Cloudinary
 cloudinaryConfig();
 
-// CORS
-// app.use(
-//   cors({
-//     origin: ["http://localhost:5173", "https://decibel-mern-ecommerce-frontend-qto.vercel.app"],
-//     credentials: true,
-//   }),
-// );
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://decibel-ecommerce-frontend.vercel.app",
+];
 
-app.use(cors());
+// CORS
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  }),
+);
 
 // middlewares
 app.use(express.json());

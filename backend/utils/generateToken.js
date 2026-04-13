@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export const generateTokens = (res, userId) => {
   // Sign access-token
   const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
@@ -14,16 +16,16 @@ export const generateTokens = (res, userId) => {
   // Access-token cookie
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: "None",
+    secure: isProduction,
+    sameSite: isProduction ? "None" : "Lax",
     maxAge: 15 * 60 * 1000,
   });
 
   // Refresh-token cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: "None",
+    secure: isProduction,
+    sameSite: isProduction ? "None" : "Lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
